@@ -1,0 +1,7 @@
+import { ResourceLibrary } from "./components/ResourceLibrary";
+import { SiteFooter } from "./components/SiteFooter";
+import { SiteHeader } from "./components/SiteHeader";
+
+export default function Home() {
+  return <><SiteHeader /><main><section className="border-b border-stone-200 bg-stone-100"><div className="mx-auto max-w-6xl px-5 py-16 sm:py-24"><p className="text-sm font-semibold uppercase tracking-wider text-stone-500">Free resource library</p><h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl">Media tools for people building stronger communities.</h1><p className="mt-5 max-w-2xl text-lg leading-8 text-stone-600">Open Media Collective creates free videos, graphics, guides, and social media resources for churches, nonprofits, and community organizations.</p><a href="#resources" className="mt-8 inline-flex rounded-md bg-stone-800 px-4 py-2.5 text-sm font-medium text-white hover:bg-stone-700">Browse resources</a></div></section><ResourceLibrary /><section id="about" className="border-t border-stone-200 bg-white"><div className="mx-auto max-w-6xl px-5 py-14 sm:py-16"><h2 className="text-2xl font-semibold text-stone-900">About Open Media Collective</h2><p className="mt-3 max-w-2xl leading-7 text-stone-600">We make practical communications resources easier to access, so more teams can focus on neighbors and mission.</p></div></section></main><SiteFooter /></>;
+}
