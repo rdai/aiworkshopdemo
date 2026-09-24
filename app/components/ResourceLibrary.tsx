@@ -2,28 +2,23 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { resources, resourceTypes, type ResourceType } from "../data/resources";
+import { resources, resourceTypes, topics, type ResourceType, type Topic } from "../data/resources";
+
+const topicStyles: Record<Topic, string> = { Grace: "bg-[#f7ddd6] text-[#8c4136]", Salvation: "bg-[#f5e7a5] text-[#755f09]", Prayer: "bg-[#e4dcf5] text-[#5d4c88]", Hope: "bg-[#d3e8ed] text-[#24636e]", Belonging: "bg-[#f8d9df] text-[#8a3d55]", Service: "bg-[#d6ecdb] text-[#28704a]" };
 
 export function ResourceLibrary() {
   const [selectedType, setSelectedType] = useState<ResourceType | "All">("All");
+  const [selectedTopic, setSelectedTopic] = useState<Topic | "All">("All");
   const [search, setSearch] = useState("");
-  const matchingResources = useMemo(() => {
+  const matching = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return resources.filter((resource) => {
-      const typeMatch = selectedType === "All" || resource.type === selectedType;
-      const searchMatch = !term || `${resource.title} ${resource.description} ${resource.type}`.toLowerCase().includes(term);
-      return typeMatch && searchMatch;
-    });
-  }, [search, selectedType]);
+    return resources.filter((item) => (selectedType === "All" || item.type === selectedType) && (selectedTopic === "All" || item.topic === selectedTopic) && (!term || (item.title + " " + item.description + " " + item.type + " " + item.topic).toLowerCase().includes(term)));
+  }, [search, selectedTopic, selectedType]);
 
-  return <section id="resources" className="mx-auto max-w-6xl px-5 py-14 sm:py-20">
-    <div className="max-w-2xl"><p className="text-sm font-semibold uppercase tracking-wider text-stone-500">Browse resources</p><h2 className="mt-2 text-3xl font-semibold tracking-tight text-stone-900">Tools for community work</h2><p className="mt-3 text-stone-600">Explore free sample resources. Select any card for details.</p></div>
-    <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <label className="block sm:w-80"><span className="sr-only">Search resources</span><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search resources" className="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm outline-none placeholder:text-stone-400 focus:border-stone-600" /></label>
-      <div className="flex flex-wrap gap-2" aria-label="Filter resource type">{(["All", ...resourceTypes] as const).map((type) => <button key={type} onClick={() => setSelectedType(type)} className={`rounded-full px-3 py-1.5 text-sm ${selectedType === type ? "bg-stone-800 text-white" : "bg-stone-200 text-stone-700 hover:bg-stone-300"}`}>{type}</button>)}</div>
-    </div>
-    <p className="mt-5 text-sm text-stone-500">{matchingResources.length} resource{matchingResources.length === 1 ? "" : "s"} found</p>
-    <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{matchingResources.map((resource) => <Link key={resource.slug} href={`/resources/${resource.slug}`} className="group flex min-h-80 flex-col rounded-lg border border-stone-200 bg-white p-4 shadow-sm transition hover:border-stone-400 hover:shadow"><div className={`flex h-28 items-center justify-center rounded-md text-sm font-semibold ${resource.color}`} aria-hidden="true">{resource.type}</div><div className="mt-5 flex flex-1 flex-col"><p className="text-xs font-medium uppercase tracking-wide text-stone-500">{resource.type} · {resource.length}</p><h3 className="mt-2 text-lg font-semibold text-stone-900 group-hover:underline">{resource.title}</h3><p className="mt-2 text-sm leading-6 text-stone-600">{resource.description}</p><span className="mt-5 inline-flex w-fit rounded-md bg-stone-800 px-3 py-2 text-sm font-medium text-white group-hover:bg-stone-700">View resource <span className="ml-1" aria-hidden="true">→</span></span></div></Link>)}</div>
-    {matchingResources.length === 0 && <p className="mt-8 rounded-md border border-dashed border-stone-300 p-6 text-stone-600">No resources match this search. Try another word or type.</p>}
-  </section>;
+  return <section id="resources" className="relative overflow-hidden bg-[#fbf9f3] py-16 sm:py-24"><div className="absolute right-[-7rem] top-20 h-64 w-64 rounded-full bg-[#e5f36b]/25 blur-3xl" /><div className="relative mx-auto max-w-6xl px-5"><div className="max-w-2xl"><p className="eyebrow">Resource library</p><h2 className="mt-3 text-3xl font-bold tracking-tight text-[#173d37] sm:text-4xl">A little help for the work that matters.</h2><p className="mt-4 text-lg leading-8 text-[#52706a]">Browse free, adaptable media for sharing faith, nurturing connection, and showing up for your neighbors.</p></div>
+  <div className="mt-10 rounded-[1.75rem] border border-[#dce5d7] bg-white p-5 shadow-[0_18px_50px_rgba(23,61,55,0.08)] sm:p-7"><div className="flex flex-col gap-5"><div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end"><div><p className="text-sm font-bold text-[#173d37]">What are you exploring?</p><div className="mt-3 flex flex-wrap gap-2" aria-label="Browse resource topics"><button onClick={() => setSelectedTopic("All")} className={"topic-button " + (selectedTopic === "All" ? "bg-[#173d37] text-white" : "bg-[#f2f3ed] text-[#52706a]")}>All topics</button>{topics.map((topic) => <button key={topic} onClick={() => setSelectedTopic(topic)} className={"topic-button " + (selectedTopic === topic ? "bg-[#173d37] text-white" : topicStyles[topic])}>{topic}</button>)}</div></div><label className="block lg:w-72"><span className="sr-only">Search resources</span><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search the library" className="w-full rounded-full border border-[#cbd8cf] bg-[#fbf9f3] px-4 py-2.5 text-sm outline-none placeholder:text-[#82958e] focus:border-[#173d37]" /></label></div><div className="flex flex-wrap gap-2 border-t border-[#e5ebe2] pt-5" aria-label="Filter resource type">{(["All", ...resourceTypes] as const).map((type) => <button key={type} onClick={() => setSelectedType(type)} className={"rounded-full border px-3 py-1.5 text-sm font-medium transition " + (selectedType === type ? "border-[#173d37] bg-[#173d37] text-white" : "border-[#dce5d7] text-[#52706a] hover:border-[#52706a]")}>{type}</button>)}</div></div></div>
+  <div className="mt-7 flex items-center justify-between"><p className="text-sm text-[#667d75]">{matching.length} resource{matching.length === 1 ? "" : "s"} to explore</p>{selectedTopic !== "All" && <button className="text-sm font-bold text-[#28584e] underline underline-offset-4" onClick={() => setSelectedTopic("All")}>Clear topic</button>}</div>
+  <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{matching.map((item) => <Link key={item.slug} href={"/resources/" + item.slug} className="group flex min-h-[23rem] flex-col overflow-hidden rounded-[1.5rem] border border-[#dce5d7] bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"><div className={"flex h-28 items-center justify-between rounded-2xl p-5 " + item.color}><span className="text-4xl font-black" aria-hidden="true">{item.icon}</span><span className="rounded-full bg-white/65 px-3 py-1 text-xs font-bold">{item.topic}</span></div><div className="mt-5 flex flex-1 flex-col"><p className="text-xs font-bold uppercase tracking-wider text-[#779088]">{item.type} - {item.length}</p><h3 className="mt-2 text-xl font-bold tracking-tight text-[#173d37] group-hover:underline">{item.title}</h3><p className="mt-2 text-sm leading-6 text-[#52706a]">{item.description}</p><span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#28584e]">Explore resource <span aria-hidden="true">-&gt;</span></span></div></Link>)}</div>
+  {matching.length === 0 && <p className="mt-8 rounded-2xl border border-dashed border-[#b7c9bf] bg-white p-8 text-[#52706a]">No resources match this search. Try a different word or explore all topics.</p>}
+</div></section>;
 }
